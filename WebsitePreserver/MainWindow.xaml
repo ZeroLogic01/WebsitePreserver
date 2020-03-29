@@ -1,0 +1,31 @@
+﻿<Controls:MetroWindow x:Class="WebsitePreserver.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:views="clr-namespace:WebsitePreserver.Views"     
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Icon="pack://application:,,,/Resources/logo.ico"
+        Height="308" Width="563" 
+        MinHeight="308" MinWidth="563" 
+        FontSize="14"
+        ResizeMode="CanMinimize"
+        GlowBrush="Gray"
+        BorderThickness="1"
+        ShowIconOnTitleBar="False"
+        Dialog:DialogParticipation.Register="{Binding}"
+        Title="{Binding ApplicationTitle}" 
+        Closing="MetroWindow_Closing"
+        Loaded="Window_Loaded">
+    
+
+    <Border Margin="0" Padding="20 20 20 0" 
+            VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+        <views:MainView />
+
+    </Border>
+</Controls:MetroWindow>

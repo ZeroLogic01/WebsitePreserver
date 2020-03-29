@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="WebsitePreserver.Views.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:views="clr-namespace:WebsitePreserver.Views"
+        mc:Ignorable="d"
+        d:DesignHeight="250" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height=".75*"/>
+            <!--<RowDefinition Height=".75*"/>-->
+            <RowDefinition Height=".30*"/>
+        </Grid.RowDefinitions>
+
+        <views:InputFileView Grid.Row="0" Margin="0,3,0,3"/>
+
+        <views:OutputDirectoryView Grid.Row="1" Margin="0,3,0,3"/>
+
+        <Grid  Margin="0,4,0,4" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button  Grid.Column="0" Margin="0,0,2,0"
+            Content="{Binding Path=BtnStartLbl,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+            Command="{Binding StartCommand}" 
+            HorizontalAlignment="Stretch"/>
+
+            <Button  Grid.Column="1" Margin="2,0,0,0"
+            Content="{Binding Path=BtnCancelLbl,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+            Command="{Binding CancelCommand}" 
+            HorizontalAlignment="Stretch"/>
+        </Grid>
+
+        <Separator Margin="-20 0" Background="#D7D7D7"
+            Grid.Row="3"  VerticalAlignment="Top"/>
+
+        <views:StatusView BorderBrush="{StaticResource ProgressBarBackgroundBrush}" 
+                        BorderThickness="1"
+            Grid.Row="4" />
+
+    </Grid>
+</UserControl>
