@@ -86,7 +86,11 @@ namespace WebsiteCrawler
                                            // get the autoit script path
                                            string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts", "SaveHtmlFile.exe");
 
-
+                                           string saveAsDialogTitle = @"Save As", confirmSaveAsDialogTitle = @"Confirm Save As";
+#if (!DEBUG)
+                                           saveAsDialogTitle = @"Speichern unter"; 
+                                           confirmSaveAsDialogTitle = @"Speichern unter bestätigen";
+#endif
                                            await Task.Run(async () =>
                                            {
                                                ProcessStartInfo startInfo = new ProcessStartInfo
@@ -94,7 +98,7 @@ namespace WebsiteCrawler
                                                    FileName = scriptPath,
                                                    ErrorDialog = true,
                                                    UseShellExecute = false,
-                                                   Arguments = $"\"{projectDir.FullName}\" \"{pageTitle}\""
+                                                   Arguments = $"\"{projectDir.FullName}\" \"{pageTitle}\" \"{saveAsDialogTitle}\" \"{confirmSaveAsDialogTitle}\""
                                                };
 
                                                await processHelper.StartProcess(startInfo, cancellationToken);
