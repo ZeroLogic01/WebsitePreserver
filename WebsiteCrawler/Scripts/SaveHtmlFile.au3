@@ -1,5 +1,5 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Outfile=C:\Users\User\source\repos\WebsitePreserver.App\WebsiteCrawler\Scripts\SaveHtmlFile.exe
+#AutoIt3Wrapper_Outfile=SaveHtmlFile.exe
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
 ;#AutoIt3Wrapper_UseUpx=n
@@ -16,9 +16,9 @@ Func Main()
 	Local $folderPath = $CmdLine[1]
 	Local $browserTabTitle = $CmdLine[2]
 	;Speichern unter
-	Local $saveFileDialogTitle="Speichern unter" ;browser "Save As" dialog title
+	Local $saveFileDialogTitle=$CmdLine[3] ;browser "Save As" dialog title
 	;Speichern unter bestätigen
-	Local $confirmSaveAsDialog="Speichern unter bestätigen" ;Confirm Save As
+	Local $confirmSaveAsDialog=$CmdLine[4] ;Confirm Save As
 
 	;activate browser window
 	If WinExists($browserTabTitle) Then
@@ -79,7 +79,7 @@ Func SaveHtmlFile($saveFileDialogTitle, $folderPath, $confirmSaveAsDialog, $brow
 			EndIF
 		WEnd
 		;Take image
-		SaveImage($fileName, $folderPath, $confirmSaveAsDialog, $browserTabTitle)
+		;SaveImage($fileName, $folderPath, $confirmSaveAsDialog, $browserTabTitle)
 	ElseIf $retryCount >= 0 Then
 		sleep(250)
 		SaveHtmlFile($saveFileDialogTitle, $folderPath, $confirmSaveAsDialog, $browserTabTitle, $retryCount - 1);
