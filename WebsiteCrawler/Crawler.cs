@@ -22,10 +22,14 @@ namespace WebsiteCrawler
         public event ProgressHandler UpdateStatus;
 
         public async Task DownloadWebpageAndScreenshot(List<Project> projects, string localPath,
-            string firefoxProfile, string temporaryDownloadsDirectory, CancellationToken cancellationToken)
+            string firefoxProfile, string temporaryDownloadsDirectory, string saveAsDialogTitle, string confirmSaveAsDialogTitle,
+            string saveAsDialogFolderAddressPrefixText, CancellationToken cancellationToken)
         {
             try
             {
+                Console.WriteLine(saveAsDialogTitle);
+                Console.WriteLine(confirmSaveAsDialogTitle);
+                Console.WriteLine(saveAsDialogFolderAddressPrefixText);
                 UpdateStatus?.Invoke($"Initializing Firefox...");
 
                 await Task.Run(async () =>
@@ -85,21 +89,12 @@ namespace WebsiteCrawler
                                            // get the autoit script path
                                            string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts", "SaveHtmlFile.exe");
 
-                                           string saveAsDialogTitle = @"Save As", confirmSaveAsDialogTitle = @"Confirm Save As";
-                                           // This is "Save As" dialog's folder address bar prefix text
-                                           string SaveAsDialogFolderAddressPrefixText = "Address: ";
-#if (!DEBUG)
-                                           SaveAsDialogFolderAddressPrefixText = "Adresse: ";
-                                           saveAsDialogTitle = @"Speichern unter"; 
-                                           confirmSaveAsDialogTitle = @"Speichern unter bestätigen";
-#endif
-
                                            /* 
                                             * some webpages load pages using ajax/javascript which the webdriver can't 
                                             * detect so it's better wait for x seconds to let the page fully load then
                                             * run the process
                                            */
-                                           await Task.Delay(TimeSpan.FromSeconds(3));
+                                           await Task.Delay(TimeSpan.FromSeconds(2));
                                            await Task.Run(async () =>
                                            {
                                                ProcessStartInfo startInfo = new ProcessStartInfo
@@ -108,7 +103,7 @@ namespace WebsiteCrawler
                                                    ErrorDialog = true,
                                                    UseShellExecute = false,
                                                    Arguments = $"\"{projectDir.FullName}\" \"{pageTitle}\" \"{saveAsDialogTitle}\" \"{confirmSaveAsDialogTitle}\" " +
-                                                   $"\"{SaveAsDialogFolderAddressPrefixText}\""
+                                                   $"\"{saveAsDialogFolderAddressPrefixText}\""
                                                };
 
                                                await processHelper.StartProcess(startInfo, cancellationToken);
