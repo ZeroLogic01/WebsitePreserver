@@ -78,7 +78,6 @@ Func SaveHtmlFile($saveFileDialogTitle, $folderPath, $confirmSaveAsDialog, $brow
 				WinActivate($confirmSaveAsDialog)
 				WinWaitActive($confirmSaveAsDialog)
 				;While WinExists($confirmSaveAsDialog)
-					MsgBox($MB_SYSTEMMODAL, "", "Hoshiyaar!")
 					ControlClick($confirmSaveAsDialog,"","Button1")
 				;WEnd
 			EndIF
