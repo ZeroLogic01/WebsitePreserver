@@ -107,7 +107,10 @@ namespace WebsitePreserver.ViewModels
                     OutputRootDirectory = OutputDirectoryVM.Path
                 };
                 preserver.UpdateStatusText += Preserver_UpdateStatusText;
-                await preserver.Start(CTS.Token, InputFileVM.FirefoxProfileName);
+
+                await preserver.Start(CTS.Token, InputFileVM.FirefoxProfileName, 
+                    Properties.Resources.SaveAsDialogTitle, Properties.Resources.ConfirmSaveAsDialogTitle,
+                    Properties.Resources.SaveAsDialogFolderAddressPrefixText, Properties.Resources.TemporaryFolder);
             }
             catch (Exception e)
             {
