@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -14,6 +15,11 @@ namespace WebsitePreserver
     /// </summary>
     public partial class App : Application
     {
+        App()
+        {
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+            Console.WriteLine(Thread.CurrentThread.CurrentCulture);
+        }
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             if (e.Exception is System.Runtime.InteropServices.COMException comException && comException.ErrorCode == -2147221040)
