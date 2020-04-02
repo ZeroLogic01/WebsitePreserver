@@ -76,21 +76,30 @@ namespace WebsiteCrawler
                                            UpdateStatus?.Invoke($"Preserving {url}", 0);
                                            driver.Navigate().GoToUrl(url);
 
-
                                            cancellationToken.ThrowIfCancellationRequested();
 
-
                                            string pageTitle = driver.Title;
+
                                            pageTitle = pageTitle.Replace("\"", "\"\"");
 
                                            // get the autoit script path
                                            string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts", "SaveHtmlFile.exe");
 
                                            string saveAsDialogTitle = @"Save As", confirmSaveAsDialogTitle = @"Confirm Save As";
+                                           // This is "Save As" dialog's folder address bar prefix text
+                                           string SaveAsDialogFolderAddressPrefixText = "Address: ";
 #if (!DEBUG)
+                                           SaveAsDialogFolderAddressPrefixText = "Adresse: ";
                                            saveAsDialogTitle = @"Speichern unter"; 
                                            confirmSaveAsDialogTitle = @"Speichern unter bestätigen";
 #endif
+
+                                           /* 
+                                            * some webpages load pages using ajax/javascript which the webdriver can't 
+                                            * detect so it's better wait for x seconds to let the page fully load then
+                                            * run the process
+                                           */
+                                           await Task.Delay(TimeSpan.FromSeconds(3));
                                            await Task.Run(async () =>
                                            {
                                                ProcessStartInfo startInfo = new ProcessStartInfo
@@ -98,7 +107,8 @@ namespace WebsiteCrawler
                                                    FileName = scriptPath,
                                                    ErrorDialog = true,
                                                    UseShellExecute = false,
-                                                   Arguments = $"\"{projectDir.FullName}\" \"{pageTitle}\" \"{saveAsDialogTitle}\" \"{confirmSaveAsDialogTitle}\""
+                                                   Arguments = $"\"{projectDir.FullName}\" \"{pageTitle}\" \"{saveAsDialogTitle}\" \"{confirmSaveAsDialogTitle}\" " +
+                                                   $"\"{SaveAsDialogFolderAddressPrefixText}\""
                                                };
 
                                                await processHelper.StartProcess(startInfo, cancellationToken);
@@ -146,8 +156,8 @@ namespace WebsiteCrawler
                                    UpdateStatus?.Invoke($"Preservation complete", 0);
                                    var msg = "Ensure that whether all files are successfully downloaded  or not, if yes press the stop button";
                                    UpdateStatus?.Invoke(msg);
-                                   await Task.Delay(TimeSpan.FromSeconds(6));
-                                   MessageBox.Show("Ensure that whether all files are successfully downloaded  or not, if yes press the stop button",
+                                   // await Task.Delay(TimeSpan.FromSeconds(6));
+                                   MessageBox.Show(msg,
                                        "Information"
                                        , MessageBoxButton.OK, MessageBoxImage.Information);
                                }
