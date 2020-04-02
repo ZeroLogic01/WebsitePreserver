@@ -24,7 +24,8 @@ Func Main()
 	If WinExists($browserTabTitle) Then
 		WinActivate($browserTabTitle)
 		WinWaitActive($browserTabTitle)
-		Send("^{s}")
+		ControlSend($browserTabTitle, "", "", "^{s}")
+		;Send("^{s}")
 		Sleep(200)
 		SaveHtmlFile($saveFileDialogTitle, $folderPath, $confirmSaveAsDialog, $browserTabTitle, 5); 5 is the number of retries allowed
 	EndIf
@@ -44,23 +45,26 @@ Func SaveHtmlFile($saveFileDialogTitle, $folderPath, $confirmSaveAsDialog, $brow
 			SelectTheComboBox($saveFileDialogTitle, 1)
 		EndIf
 
-		; set the folder path in the address bar
-		ControlFocus($saveFileDialogTitle,"","ToolbarWindow324")
-		ControlSend($saveFileDialogTitle, "", "[CLASS:ToolbarWindow32; INSTANCE:4]",  "{space}")
-		ControlSetText($saveFileDialogTitle,"","", $folderPath)
-		ControlSend($saveFileDialogTitle, "", "",  "{Enter}")
-		;Send('{Enter}')
-		;sleep(500)
+		Local $currentFolderAddressInAddressBar = StringReplace(ControlGetText($saveFileDialogTitle,"","[CLASS:ToolbarWindow32; INSTANCE:4]"), $CmdLine[5], '')
+		If StringCompare($currentFolderAddressInAddressBar,$folderPath,0) <> 0 Then
+			; set the folder path in the address bar
+			ControlFocus($saveFileDialogTitle,"","ToolbarWindow324")
+			ControlSend($saveFileDialogTitle, "", "[CLASS:ToolbarWindow32; INSTANCE:4]",  "{space}")
+			ControlSetText($saveFileDialogTitle,"","", $folderPath)
+			ControlSend($saveFileDialogTitle, "", "",  "{Enter}")
+			;Send('{Enter}')
+			Sleep(500)
+		EndIf
 
 		While WinExists($saveFileDialogTitle)
-			$fileName=ControlGetText($saveFileDialogTitle,"","Edit1")
+			;$fileName=ControlGetText($saveFileDialogTitle,"","Edit1")
 			; Rename the file if it already exists
 			if FileExists($folderPath&"\"&$fileName) Then
 				Local $newFileName=GetFileNameWithoutExtension($fileName)&GetDateTime()&"."&$fileExtension
 				$fileName=$newFileName
 			EndIf
 
-			Sleep(500)
+			;Sleep(500)
 			;Set focus to file name control
 			ControlFocus($saveFileDialogTitle,"","Edit1")
 			ControlCommand($saveFileDialogTitle,"","[CLASS:Edit;INSTANCE:1]","EditPaste", $fileName)
@@ -73,9 +77,10 @@ Func SaveHtmlFile($saveFileDialogTitle, $folderPath, $confirmSaveAsDialog, $brow
 			If WinExists($confirmSaveAsDialog) Then
 				WinActivate($confirmSaveAsDialog)
 				WinWaitActive($confirmSaveAsDialog)
-				While WinExists($confirmSaveAsDialog)
-					ControlClick($confirmSaveAsDialog,"","Button2")
-				WEnd
+				;While WinExists($confirmSaveAsDialog)
+					MsgBox($MB_SYSTEMMODAL, "", "Hoshiyaar!")
+					ControlClick($confirmSaveAsDialog,"","Button1")
+				;WEnd
 			EndIF
 		WEnd
 		;Take image
@@ -97,14 +102,17 @@ Func SaveImage($fileName, $folderPath, $confirmSaveAsDialog, $browserTabTitle) ;
 	Local $imageFileFullPath = '"'&$folderPath&'\'&$imageFileNameWithoutExtenstion&'"'
 
 	; to take screenshot, send control+shift+k shortcut key
-	Send("^+{k}")
+	ControlSend($browserTabTitle, "", "", "^+{k}")
+	;Send("^+{k}")
 	Sleep(1700)
 	WinActivate($browserTabTitle)
 	if WinActive($browserTabTitle) Then
-		Send("^+{k}") ;send this key again to set focus into web console
+		ControlSend($browserTabTitle, "", "", "^+{k}")
+		;Send("^+{k}") ;send this key again to set focus into web console
 		SendKeepActive($browserTabTitle)
 		Send(":screenshot "&$imageFileFullPath&" --fullpage")
-		Send("{Enter}")
+		;Send("{Enter}")
+		ControlSend($browserTabTitle, "", "", "{Enter}")
 	EndIf
 EndFunc
 
