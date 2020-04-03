@@ -29,7 +29,7 @@ namespace WebsitePreserver
         {
             try
             {
-                MainViewModel.CTS.Cancel();
+                MainViewModel.CTS?.Cancel();
             }
             catch (Exception) { }
 
