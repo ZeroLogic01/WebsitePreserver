@@ -28,10 +28,13 @@ namespace WebsiteCrawler
         #region Methods
 
 
-        public async Task Start(CancellationToken cancellationToken, string firefoxProfileName, string saveAsDialogTitle, string confirmSaveAsDialogTitle,
-            string saveAsDialogFolderAddressPrefixText, string tempDownloadDirectory)
+        public async Task Start(string firefoxProfileName, string saveAsDialogTitle, string confirmSaveAsDialogTitle, string saveAsDialogFolderAddressPrefixText,
+            string tempDownloadDirectory, CancellationToken cancellationToken)
         {
-            if (!Crawler.ProfileExist(firefoxProfileName)) { return; }
+            if (!Crawler.ProfileExist(firefoxProfileName)) 
+            {
+                throw new Exception($"Firefox profile ({firefoxProfileName}) doesn't exist.");
+            }
 
             UpdateStatusText?.Invoke("Reading excel file...");
             var projects = await ExcelReader.ReadExcelFile(ExcelFilePath);
