@@ -27,9 +27,6 @@ namespace WebsiteCrawler
         {
             try
             {
-                Console.WriteLine(saveAsDialogTitle);
-                Console.WriteLine(confirmSaveAsDialogTitle);
-                Console.WriteLine(saveAsDialogFolderAddressPrefixText);
                 UpdateStatus?.Invoke($"Initializing Firefox...");
 
                 await Task.Run(async () =>
@@ -56,21 +53,15 @@ namespace WebsiteCrawler
                                // maximize window
                                driver.Manage().Window.Maximize();
 
+                               bool isFirstUrl = true;
                                foreach (var project in projects)
                                {
                                    if (cancellationToken.IsCancellationRequested) { break; }
 
-                                   var projectDir = Directory.CreateDirectory(Path.Combine(localPath, project.Name));
-
                                    UpdateStatus?.Invoke($"Preserving {project.Name}...", 0);
-
-                                   //Path of the text-file that contains all URLSs of this project
-                                   string filePath = Path.Combine(localPath, project.Name, $"{project.Name} URLs.txt");
-
                                    // initialize the Process helper
                                    ProcessHelper processHelper = new ProcessHelper();
 
-                                   //var url = @"http://seifen-trend.wixsite.com/mtg-seifen-trend";
                                    foreach (var url in project.URLs)
                                    {
                                        try
@@ -79,49 +70,23 @@ namespace WebsiteCrawler
 
                                            UpdateStatus?.Invoke($"Preserving {url}", 0);
                                            driver.Navigate().GoToUrl(url);
+                                           await Task.Delay(TimeSpan.FromSeconds(5));
 
                                            cancellationToken.ThrowIfCancellationRequested();
 
-                                           string pageTitle = driver.Title;
+                                           double waitForConsoleDelay = isFirstUrl ? 3 : 1.5;
 
-                                           pageTitle = pageTitle.Replace("\"", "\"\"");
-
-                                           // get the autoit script path
-                                           string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts", "SaveHtmlFile.exe");
-
-                                           /* 
-                                            * some webpages load pages using ajax/javascript which the webdriver can't 
-                                            * detect so it's better wait for x seconds to let the page fully load then
-                                            * run the process
-                                           */
-                                           await Task.Delay(TimeSpan.FromSeconds(2));
-                                           await Task.Run(async () =>
+                                           var projectDir = Directory.CreateDirectory(Path.Combine(localPath, project.Name));
+                                           bool success = await FirefoxAutoIt.SaveHtmlFile(AutoIt.AutoItX.WinGetHandle(driver.Title), saveAsDialogTitle,
+                                                confirmSaveAsDialogTitle, saveAsDialogFolderAddressPrefixText, projectDir.FullName,
+                                                processHelper, waitForConsoleDelay, cancellationToken);
+                                           if (success)
                                            {
-                                               ProcessStartInfo startInfo = new ProcessStartInfo
-                                               {
-                                                   FileName = scriptPath,
-                                                   ErrorDialog = true,
-                                                   UseShellExecute = false,
-                                                   Arguments = $"\"{projectDir.FullName}\" \"{pageTitle}\" \"{saveAsDialogTitle}\" \"{confirmSaveAsDialogTitle}\" " +
-                                                   $"\"{saveAsDialogFolderAddressPrefixText}\""
-                                               };
-
-                                               await processHelper.StartProcess(startInfo, cancellationToken);
-
-                                           });
-
-                                           /* 
-                                            * if URL is the first element, this means we need 
-                                            * to create a new file
-                                            */
-                                           if (project.URLs.FirstOrDefault().Equals(url))
-                                           {
-                                               await TextFileCreator.Create(filePath, $"{url}{Environment.NewLine}");
-                                           }
-                                           else /* else append it */
-                                           {
+                                               //Path of the text-file that contains all URLSs of this project
+                                               string filePath = Path.Combine(localPath, project.Name, $"{project.Name} URLs.txt");
                                                await TextFileCreator.Append(filePath, $"{url}{Environment.NewLine}");
                                            }
+                                           isFirstUrl = false;
                                        }
                                        catch (OperationCanceledException)
                                        {
@@ -143,7 +108,6 @@ namespace WebsiteCrawler
                                            throw;
                                        }
                                    }
-                                   // break;
                                }
 
                                if (!cancellationToken.IsCancellationRequested)
