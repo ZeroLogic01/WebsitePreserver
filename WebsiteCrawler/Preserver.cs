@@ -28,9 +28,13 @@ namespace WebsiteCrawler
         #region Methods
 
 
-        public async Task Start(CancellationToken cancellationToken, string firefoxProfileName)
+        public async Task Start(string firefoxProfileName, string saveAsDialogTitle, string confirmSaveAsDialogTitle, string saveAsDialogFolderAddressPrefixText,
+            string tempDownloadDirectory, CancellationToken cancellationToken)
         {
-            if (!Crawler.ProfileExist(firefoxProfileName)) { return; }
+            if (!Crawler.ProfileExist(firefoxProfileName)) 
+            {
+                throw new Exception($"Firefox profile ({firefoxProfileName}) doesn't exist.");
+            }
 
             UpdateStatusText?.Invoke("Reading excel file...");
             var projects = await ExcelReader.ReadExcelFile(ExcelFilePath);
@@ -42,9 +46,10 @@ namespace WebsiteCrawler
             crawler.UpdateStatus += UpdateStatus;
 
 
-            string _temporaryDownloadsDirectory = Path.Combine(OutputRootDirectory, @"Temporäre Dateien");
+            string _temporaryDownloadsDirectory = Path.Combine(OutputRootDirectory, tempDownloadDirectory);
             await crawler.DownloadWebpageAndScreenshot(projects, OutputRootDirectory,
-               firefoxProfileName, _temporaryDownloadsDirectory, cancellationToken);
+               firefoxProfileName, _temporaryDownloadsDirectory, saveAsDialogTitle, confirmSaveAsDialogTitle,
+                    saveAsDialogFolderAddressPrefixText, cancellationToken);
             try
             {
                 // delete the "temporary files" directory

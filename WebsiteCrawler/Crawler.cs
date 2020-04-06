@@ -22,7 +22,8 @@ namespace WebsiteCrawler
         public event ProgressHandler UpdateStatus;
 
         public async Task DownloadWebpageAndScreenshot(List<Project> projects, string localPath,
-            string firefoxProfile, string temporaryDownloadsDirectory, CancellationToken cancellationToken)
+            string firefoxProfile, string temporaryDownloadsDirectory, string saveAsDialogTitle, string confirmSaveAsDialogTitle,
+            string saveAsDialogFolderAddressPrefixText, CancellationToken cancellationToken)
         {
             try
             {
@@ -52,21 +53,15 @@ namespace WebsiteCrawler
                                // maximize window
                                driver.Manage().Window.Maximize();
 
+                               bool isFirstUrl = true;
                                foreach (var project in projects)
                                {
                                    if (cancellationToken.IsCancellationRequested) { break; }
 
-                                   var projectDir = Directory.CreateDirectory(Path.Combine(localPath, project.Name));
-
                                    UpdateStatus?.Invoke($"Preserving {project.Name}...", 0);
-
-                                   //Path of the text-file that contains all URLSs of this project
-                                   string filePath = Path.Combine(localPath, project.Name, $"{project.Name} URLs.txt");
-
                                    // initialize the Process helper
                                    ProcessHelper processHelper = new ProcessHelper();
 
-                                   //var url = @"http://seifen-trend.wixsite.com/mtg-seifen-trend";
                                    foreach (var url in project.URLs)
                                    {
                                        try
@@ -75,44 +70,23 @@ namespace WebsiteCrawler
 
                                            UpdateStatus?.Invoke($"Preserving {url}", 0);
                                            driver.Navigate().GoToUrl(url);
-
+                                           await Task.Delay(TimeSpan.FromSeconds(5));
 
                                            cancellationToken.ThrowIfCancellationRequested();
 
+                                           double waitForConsoleDelay = isFirstUrl ? 3 : 1.5;
 
-                                           string pageTitle = driver.Title;
-                                           pageTitle = pageTitle.Replace("\"", "\"\"");
-
-                                           // get the autoit script path
-                                           string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts", "SaveHtmlFile.exe");
-
-
-                                           await Task.Run(async () =>
+                                           var projectDir = Directory.CreateDirectory(Path.Combine(localPath, project.Name));
+                                           bool success = await FirefoxAutomater.SaveHtmlFile(AutoIt.AutoItX.WinGetHandle(driver.Title), saveAsDialogTitle,
+                                                confirmSaveAsDialogTitle, saveAsDialogFolderAddressPrefixText, projectDir.FullName,
+                                                processHelper, waitForConsoleDelay, cancellationToken);
+                                           if (success)
                                            {
-                                               ProcessStartInfo startInfo = new ProcessStartInfo
-                                               {
-                                                   FileName = scriptPath,
-                                                   ErrorDialog = true,
-                                                   UseShellExecute = false,
-                                                   Arguments = $"\"{projectDir.FullName}\" \"{pageTitle}\""
-                                               };
-
-                                               await processHelper.StartProcess(startInfo, cancellationToken);
-
-                                           });
-
-                                           /* 
-                                            * if URL is the first element, this means we need 
-                                            * to create a new file
-                                            */
-                                           if (project.URLs.FirstOrDefault().Equals(url))
-                                           {
-                                               await TextFileCreator.Create(filePath, $"{url}{Environment.NewLine}");
-                                           }
-                                           else /* else append it */
-                                           {
+                                               //Path of the text-file that contains all URLSs of this project
+                                               string filePath = Path.Combine(localPath, project.Name, $"{project.Name} URLs.txt");
                                                await TextFileCreator.Append(filePath, $"{url}{Environment.NewLine}");
                                            }
+                                           isFirstUrl = false;
                                        }
                                        catch (OperationCanceledException)
                                        {
@@ -134,7 +108,6 @@ namespace WebsiteCrawler
                                            throw;
                                        }
                                    }
-                                   // break;
                                }
 
                                if (!cancellationToken.IsCancellationRequested)
@@ -142,8 +115,8 @@ namespace WebsiteCrawler
                                    UpdateStatus?.Invoke($"Preservation complete", 0);
                                    var msg = "Ensure that whether all files are successfully downloaded  or not, if yes press the stop button";
                                    UpdateStatus?.Invoke(msg);
-                                   await Task.Delay(TimeSpan.FromSeconds(6));
-                                   MessageBox.Show("Ensure that whether all files are successfully downloaded  or not, if yes press the stop button",
+                                   // await Task.Delay(TimeSpan.FromSeconds(6));
+                                   MessageBox.Show(msg,
                                        "Information"
                                        , MessageBoxButton.OK, MessageBoxImage.Information);
                                }
