@@ -77,7 +77,7 @@ namespace WebsiteCrawler
                                            double waitForConsoleDelay = isFirstUrl ? 3 : 1.5;
 
                                            var projectDir = Directory.CreateDirectory(Path.Combine(localPath, project.Name));
-                                           bool success = await FirefoxAutoIt.SaveHtmlFile(AutoIt.AutoItX.WinGetHandle(driver.Title), saveAsDialogTitle,
+                                           bool success = await FirefoxAutomater.SaveHtmlFile(AutoIt.AutoItX.WinGetHandle(driver.Title), saveAsDialogTitle,
                                                 confirmSaveAsDialogTitle, saveAsDialogFolderAddressPrefixText, projectDir.FullName,
                                                 processHelper, waitForConsoleDelay, cancellationToken);
                                            if (success)
