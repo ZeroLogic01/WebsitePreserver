@@ -68,7 +68,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Scripts\ManipulateComboBox.au3" />
-    <None Include="Scripts\SaveHtmlFile - original - 22-08-19.au3" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="geckodriver.exe">
