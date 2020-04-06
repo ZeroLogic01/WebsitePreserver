@@ -105,7 +105,7 @@ namespace WebsiteCrawler
                     }
                     AutoItX.ControlSetText(saveAsDialogTitle, "", "Edit2", folderPath);
                     AutoItX.ControlSend(saveAsDialogTitle, "", "Edit2", "{Enter}");
-                    await Task.Delay(500);
+                    await Task.Delay(700);
                 }
 
                 if (File.Exists(Path.Combine(folderPath, fileName)))
