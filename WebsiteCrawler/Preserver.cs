@@ -28,10 +28,10 @@ namespace WebsiteCrawler
         #region Methods
 
 
-        public async Task Start(string firefoxProfileName, string saveAsDialogTitle, string confirmSaveAsDialogTitle, string saveAsDialogFolderAddressPrefixText,
+        public async Task Start(string firefoxProfileName, string saveAsDialogTitle,
             string tempDownloadDirectory, CancellationToken cancellationToken)
         {
-            if (!Crawler.ProfileExist(firefoxProfileName)) 
+            if (!Crawler.ProfileExist(firefoxProfileName))
             {
                 throw new Exception($"Firefox profile ({firefoxProfileName}) doesn't exist.");
             }
@@ -48,8 +48,8 @@ namespace WebsiteCrawler
 
             string _temporaryDownloadsDirectory = Path.Combine(OutputRootDirectory, tempDownloadDirectory);
             await crawler.DownloadWebpageAndScreenshot(projects, OutputRootDirectory,
-               firefoxProfileName, _temporaryDownloadsDirectory, saveAsDialogTitle, confirmSaveAsDialogTitle,
-                    saveAsDialogFolderAddressPrefixText, cancellationToken);
+               firefoxProfileName, _temporaryDownloadsDirectory, saveAsDialogTitle,
+                    cancellationToken);
             try
             {
                 // delete the "temporary files" directory

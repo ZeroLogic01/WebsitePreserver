@@ -22,8 +22,8 @@ namespace WebsiteCrawler
         public event ProgressHandler UpdateStatus;
 
         public async Task DownloadWebpageAndScreenshot(List<Project> projects, string localPath,
-            string firefoxProfile, string temporaryDownloadsDirectory, string saveAsDialogTitle, string confirmSaveAsDialogTitle,
-            string saveAsDialogFolderAddressPrefixText, CancellationToken cancellationToken)
+            string firefoxProfile, string temporaryDownloadsDirectory, string saveAsDialogTitle,
+             CancellationToken cancellationToken)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace WebsiteCrawler
 
                                            var projectDir = Directory.CreateDirectory(Path.Combine(localPath, project.Name));
                                            bool success = await FirefoxAutomater.SaveHtmlFile(AutoIt.AutoItX.WinGetHandle(driver.Title), saveAsDialogTitle,
-                                                confirmSaveAsDialogTitle, saveAsDialogFolderAddressPrefixText, projectDir.FullName,
+                                                projectDir.FullName,
                                                 processHelper, waitForConsoleDelay, cancellationToken);
                                            if (success)
                                            {
