@@ -18,7 +18,6 @@ namespace WebsitePreserver
         App()
         {
             Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
-            Console.WriteLine(Thread.CurrentThread.CurrentCulture);
         }
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
@@ -27,7 +26,7 @@ namespace WebsitePreserver
                 MessageBox.Show(e.Exception.Message
                     + Environment.NewLine
                     + "Shutting down the Application!");
-                Application.Current.Shutdown();
+                Current.Shutdown();
             }
 
             if (e.Exception != null)
