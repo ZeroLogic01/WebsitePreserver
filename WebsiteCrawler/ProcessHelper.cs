@@ -57,7 +57,7 @@ namespace WebsiteCrawler
                 cancellationTokenRegisteration.Dispose();
                 if (ex.Message.Equals("The system cannot find the file specified"))
                 {
-                    throw new FileNotFoundException("SaveHtmlFile.exe not found, Maybe blocked by the anti-virus or deleted.");
+                    throw new FileNotFoundException("ManipulateComboBox.exe not found, Maybe blocked by the anti-virus or deleted.");
                 }
                 throw ex;
             }
