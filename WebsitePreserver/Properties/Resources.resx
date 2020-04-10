@@ -121,9 +121,6 @@
     <value>Confirm Save As</value>
     <comment>Confirm Save As Dialog Title</comment>
   </data>
-  <data name="SaveAsDialogFolderAddressPrefixText" xml:space="preserve">
-    <value>Address: </value>
-  </data>
   <data name="SaveAsDialogTitle" xml:space="preserve">
     <value>Save As</value>
   </data>

@@ -70,15 +70,6 @@ namespace WebsitePreserver.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Address: .
-        /// </summary>
-        internal static string SaveAsDialogFolderAddressPrefixText {
-            get {
-                return ResourceManager.GetString("SaveAsDialogFolderAddressPrefixText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Save As.
         /// </summary>
         internal static string SaveAsDialogTitle {
