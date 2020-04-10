@@ -45,6 +45,8 @@ namespace WebsitePreserver.ViewModels
         public InputFileViewModel InputFileVM { get; set; } = new InputFileViewModel();
         public OutputDirectoryViewModel OutputDirectoryVM { get; set; } = new OutputDirectoryViewModel();
 
+        public SaveAsDialogConfigViewModel SaveAsDialogConfigVM { get; set; } = new SaveAsDialogConfigViewModel();
+
         public ICommand StartCommand { set; get; }
         public ICommand CancelCommand { set; get; }
 
@@ -95,6 +97,7 @@ namespace WebsitePreserver.ViewModels
                 return;
             }
 
+
             // Disable buttons
             Enable(false);
 
@@ -108,8 +111,7 @@ namespace WebsitePreserver.ViewModels
                 };
                 preserver.UpdateStatusText += Preserver_UpdateStatusText;
 
-                await preserver.Start(InputFileVM.FirefoxProfileName, Properties.Resources.SaveAsDialogTitle,
-                    Properties.Resources.ConfirmSaveAsDialogTitle, Properties.Resources.SaveAsDialogFolderAddressPrefixText,
+                await preserver.Start(InputFileVM.FirefoxProfileName, SaveAsDialogConfigVM.SaveAsDialogTitle,
                     Properties.Resources.TemporaryFolder, CTS.Token);
             }
             catch (Exception e)
@@ -179,6 +181,16 @@ namespace WebsitePreserver.ViewModels
             {
                 return false;
             }
+
+            if (string.IsNullOrWhiteSpace(SaveAsDialogConfigVM.SaveAsDialogTitle))
+            {
+                return false;
+            }
+
+            //if (string.IsNullOrWhiteSpace(SaveAsDialogConfigVM.ConfirmSaveAsDialogTitle))
+            //{
+            //    return false;
+            //}
 
             return true;
         }

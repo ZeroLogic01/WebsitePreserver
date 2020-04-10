@@ -5,21 +5,23 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:views="clr-namespace:WebsitePreserver.Views"
         mc:Ignorable="d"
-        d:DesignHeight="250" d:DesignWidth="300">
+        d:DesignHeight="750" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height=".2*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height=".75*"/>
-            <!--<RowDefinition Height=".75*"/>-->
+            <RowDefinition Height=".70*"/>
             <RowDefinition Height=".30*"/>
         </Grid.RowDefinitions>
 
-        <views:InputFileView Grid.Row="0" Margin="0,3,0,3"/>
+        <views:SaveAsDialogConfigView Grid.Row="0"/>
 
-        <views:OutputDirectoryView Grid.Row="1" Margin="0,3,0,3"/>
+        <views:InputFileView Grid.Row="1" Margin="0,3,0,3"/>
 
-        <Grid  Margin="0,4,0,4" Grid.Row="2">
+        <views:OutputDirectoryView Grid.Row="2" Margin="0,3,0,3"/>
+
+        <Grid  Margin="0,4,0,4" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -37,7 +39,7 @@
         </Grid>
 
         <Separator Margin="-20 0" Background="#D7D7D7"
-            Grid.Row="3"  VerticalAlignment="Top"/>
+            Grid.Row="4"  VerticalAlignment="Top"/>
 
         <views:StatusView BorderBrush="{StaticResource ProgressBarBackgroundBrush}" 
                         BorderThickness="1"
