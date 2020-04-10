@@ -10,12 +10,11 @@ namespace WebsiteCrawler
     internal static class FirefoxAutomater
     {
         internal static async Task<bool> SaveHtmlFile(IntPtr browserWinHandle, string saveAsDialogTitle,
-                string confirmSaveAsDialogTitle, string saveAsDialogFolderAddressPrefixText,
                 string folderPath, ProcessHelper processHelper, double waitForConsoleDelay, CancellationToken cancellationToken)
         {
             if (InvokeSaveAsDialog(browserWinHandle))
             {
-                var (isSaved, fileName) = await HandleSaveAsDialog(saveAsDialogTitle, confirmSaveAsDialogTitle, saveAsDialogFolderAddressPrefixText
+                var (isSaved, fileName) = await HandleSaveAsDialog(saveAsDialogTitle
                     , folderPath, 5, processHelper, cancellationToken);
                 if (isSaved)
                 {
@@ -61,7 +60,7 @@ namespace WebsiteCrawler
         }
 
         private static async Task<(bool isSaved, string fileName)> HandleSaveAsDialog(string saveAsDialogTitle,
-            string confirmSaveAsDialogTitle, string saveAsDialogFolderAddressPrefixText, string folderPath, int retryCount,
+            string folderPath, int retryCount,
             ProcessHelper processHelper, CancellationToken cancellationToken)
         {
             if (AutoItX.WinExists(saveAsDialogTitle) != 0)
@@ -93,11 +92,19 @@ namespace WebsiteCrawler
                     await processHelper.StartProcess(startInfo, cancellationToken);
                 }
 
-                string currentFolderAddressInAddressBar = AutoItX.ControlGetText(saveAsDialogTitle, "", @"[CLASS:ToolbarWindow32; INSTANCE:4]")
-                    .Replace(saveAsDialogFolderAddressPrefixText, string.Empty).Trim();
 
-                if (!folderPath.Equals(currentFolderAddressInAddressBar, StringComparison.InvariantCultureIgnoreCase))
+                while (true)
                 {
+                    string currentSaveLocation = GetCurrentSaveLocation(saveAsDialogTitle);
+                    /* 
+                    * Sometime folder path won't get saved inside address-bar folder path running first time. 
+                    * So to make sure it get saved correctly, outer while loop & the condition is important.
+                   */
+                    if (currentSaveLocation.Equals(folderPath, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        break;
+                    }
+
                     //  var toolbarHandle = AutoItX.ControlGetHandle(saveAsDialogTitle, @"ToolbarWindow324");
                     if (AutoItX.ControlFocus(saveAsDialogTitle, "", @"ToolbarWindow324") == 0 || AutoItX.ControlSend(saveAsDialogTitle, "", @"ToolbarWindow324", "{space}") == 0)
                     {
@@ -105,7 +112,7 @@ namespace WebsiteCrawler
                     }
                     AutoItX.ControlSetText(saveAsDialogTitle, "", "Edit2", folderPath);
                     AutoItX.ControlSend(saveAsDialogTitle, "", "Edit2", "{Enter}");
-                    await Task.Delay(700);
+                    await Task.Delay(500);
                 }
 
                 if (File.Exists(Path.Combine(folderPath, fileName)))
@@ -118,17 +125,24 @@ namespace WebsiteCrawler
                 AutoItX.ControlCommand(saveAsDialogTitle, "", "[CLASS:Edit;INSTANCE:1]", "EditPaste", fileName);
                 AutoItX.ControlFocus(saveAsDialogTitle, "", "Button2");
                 AutoItX.ControlClick(saveAsDialogTitle, "", "Button2");
-
                 return (true, fileName);
             }
             else if (retryCount >= 0)
             {
                 Console.WriteLine(retryCount);
                 await Task.Delay(TimeSpan.FromSeconds(1));
-                return await HandleSaveAsDialog(saveAsDialogTitle, confirmSaveAsDialogTitle, saveAsDialogFolderAddressPrefixText,
+                return await HandleSaveAsDialog(saveAsDialogTitle,
                     folderPath, retryCount - 1, processHelper, cancellationToken);
             }
             return (false, string.Empty);
+        }
+
+        private static string GetCurrentSaveLocation(string saveAsDialogTitle)
+        {
+            string addressBarPrefixText = AutoItX.ControlGetText(saveAsDialogTitle, "", @"[CLASS:ToolbarWindow32; INSTANCE:4]");
+            return addressBarPrefixText
+                .Substring(addressBarPrefixText.IndexOf(':') + 1)
+                .Trim();
         }
     }
 }
