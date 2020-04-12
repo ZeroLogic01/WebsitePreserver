@@ -52,7 +52,7 @@ namespace WebsitePreserver
                 setup.ConfigurationFile = setup.ApplicationBase +
                                  string.Format("\\{0}.config", appName);
 #else
-                setup.ConfigurationFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Website Preserver" +
+                setup.ConfigurationFile = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Website Preserver" +
                                                     string.Format("\\Config\\WebsitePreserver.exe.config");
 #endif
 
