@@ -9,6 +9,12 @@ namespace WebsiteCrawler
 {
     internal static class FirefoxAutomater
     {
+        /// <summary>
+        /// Index of "Web Page, HTML only (*.html;*.html)"  in Save as dialog combo box
+        /// </summary>
+        internal const string ComboBoxIndexToSelect = "1";
+
+
         internal static async Task<bool> SaveHtmlFile(IntPtr browserWinHandle, string saveAsDialogTitle,
                 string folderPath, ProcessHelper processHelper, double waitForConsoleDelay, CancellationToken cancellationToken)
         {
@@ -73,23 +79,25 @@ namespace WebsiteCrawler
                 }
 
                 // get the full file name
-                string fileName = AutoItX.ControlGetText(saveAsDialogTitle, "", @"[CLASS:Edit; INSTANCE:1]");
+                string fileName = AutoItX.ControlGetText(saveAsDialogTitle, "", "[CLASS:Edit; INSTANCE:1]");
                 string fileExtension = Path.GetExtension(fileName);
 
                 if (fileExtension.Equals(".html", StringComparison.InvariantCultureIgnoreCase) || fileExtension.Equals(".htm", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    // get the autoit script path
-                    string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts", "ManipulateComboBox.exe");
+                    //// get the autoit script path
+                    //string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts", "ManipulateComboBox.exe");
 
-                    // select correct comboBox
-                    ProcessStartInfo startInfo = new ProcessStartInfo
-                    {
-                        FileName = scriptPath,
-                        ErrorDialog = true,
-                        UseShellExecute = false,
-                        Arguments = $"\"{saveAsDialogTitle}\" \"{1}\""
-                    };
-                    await processHelper.StartProcess(startInfo, cancellationToken);
+                    //// select correct comboBox
+                    //ProcessStartInfo startInfo = new ProcessStartInfo
+                    //{
+                    //    FileName = scriptPath,
+                    //    ErrorDialog = true,
+                    //    UseShellExecute = false,
+                    //    Arguments = $"\"{saveAsDialogTitle}\" \"{1}\""
+                    //};
+                    //await processHelper.StartProcess(startInfo, cancellationToken);
+                    AutoItX.ControlCommand(saveAsDialogTitle, "", "[CLASS:ComboBox;INSTANCE:2]", "SetCurrentSelection", ComboBoxIndexToSelect);
+
                 }
 
 
@@ -118,11 +126,19 @@ namespace WebsiteCrawler
                 if (File.Exists(Path.Combine(folderPath, fileName)))
                 {
                     fileName = $"{Path.GetFileNameWithoutExtension(fileName)}" +
-                        $"{DateTime.Now:-yyyy-MM-dd-HH-mm-ss}{fileExtension}";
+                        $"{DateTime.Now: yyyy-MM-dd-HH-mm-ss}{fileExtension}";
                 }
 
+                Console.WriteLine(fileName);
+
                 AutoItX.ControlFocus(saveAsDialogTitle, "", "Edit1");
-                AutoItX.ControlCommand(saveAsDialogTitle, "", "[CLASS:Edit;INSTANCE:1]", "EditPaste", fileName);
+                AutoItX.ControlSetText(saveAsDialogTitle, "", "[CLASS:Edit;INSTANCE:1]", fileName);
+                
+                /* in some cases control set text doesn't work well in Edit1 control, save as dialog don't
+                 * get notified with updated text so in order it to work correctly, send EditPaste command 
+                 * with empty string.
+                */
+                AutoItX.ControlCommand(saveAsDialogTitle, "", "[CLASS:Edit;INSTANCE:1]", "EditPaste", "");
                 AutoItX.ControlFocus(saveAsDialogTitle, "", "Button2");
                 AutoItX.ControlClick(saveAsDialogTitle, "", "Button2");
                 return (true, fileName);
