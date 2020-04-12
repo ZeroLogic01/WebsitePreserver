@@ -115,10 +115,7 @@ namespace WebsiteCrawler
                                    UpdateStatus?.Invoke($"Preservation complete", 0);
                                    var msg = "Ensure that whether all files are successfully downloaded  or not, if yes press the stop button";
                                    UpdateStatus?.Invoke(msg);
-                                   // await Task.Delay(TimeSpan.FromSeconds(6));
-                                   MessageBox.Show(msg,
-                                       "Information"
-                                       , MessageBoxButton.OK, MessageBoxImage.Information);
+                                   SystemSounds.Beep.Play();
                                }
 
                                while (true)
