@@ -34,7 +34,7 @@ namespace WebsitePreserver
             }
             catch (Exception) { }
 
-            Application.Current.Shutdown();
+            Application.Current?.Shutdown();
         }
     }
 }
