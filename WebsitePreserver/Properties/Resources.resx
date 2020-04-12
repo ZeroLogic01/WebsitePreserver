@@ -117,13 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ConfirmSaveAsDialogTitle" xml:space="preserve">
-    <value>Confirm Save As</value>
-    <comment>Confirm Save As Dialog Title</comment>
-  </data>
-  <data name="SaveAsDialogTitle" xml:space="preserve">
-    <value>Save As</value>
-  </data>
   <data name="TemporaryFolder" xml:space="preserve">
     <value>Temporary Files</value>
   </data>

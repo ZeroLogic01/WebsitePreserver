@@ -61,24 +61,6 @@ namespace WebsitePreserver.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Confirm Save As.
-        /// </summary>
-        internal static string ConfirmSaveAsDialogTitle {
-            get {
-                return ResourceManager.GetString("ConfirmSaveAsDialogTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Save As.
-        /// </summary>
-        internal static string SaveAsDialogTitle {
-            get {
-                return ResourceManager.GetString("SaveAsDialogTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Temporary Files.
         /// </summary>
         internal static string TemporaryFolder {
